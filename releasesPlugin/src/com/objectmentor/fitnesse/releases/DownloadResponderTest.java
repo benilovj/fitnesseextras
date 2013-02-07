@@ -4,14 +4,17 @@ import fitnesse.FitNesseContext;
 import fitnesse.http.MockRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Response;
+import fitnesse.testutil.FitNesseUtil;
 import util.RegexTestCase;
 import util.FileUtil;
 
 public class DownloadResponderTest extends RegexTestCase {
   private DownloadResponder responder;
-
+  private FitNesseContext context;
+  
   public void setUp() throws Exception {
     responder = new DownloadResponder();
+    context = FitNesseUtil.makeTestContext();
   }
 
   public void tearDown() throws Exception {
@@ -23,7 +26,7 @@ public class DownloadResponderTest extends RegexTestCase {
     request.addInput("release", "abc");
     request.setResource("xyz");
 
-    responder.makeResponse(new FitNesseContext(), request);
+    responder.makeResponse(context, request);
 
     assertEquals("abc", responder.getReleaseName());
     assertEquals("xyz", responder.getFilename());
@@ -53,11 +56,11 @@ public class DownloadResponderTest extends RegexTestCase {
     request.addInput("release", "xyz");
     request.setResource("file3.jar");
 
-    Response response = responder.makeResponse(new FitNesseContext(), request);
+    Response response = responder.makeResponse(context, request);
     assertEquals("application/x-java-archive", response.getContentType());
 
     request.setResource("file4.zip");
-    response = responder.makeResponse(new FitNesseContext(), request);
+    response = responder.makeResponse(context, request);
     assertEquals("application/zip", response.getContentType());
   }
 
@@ -67,7 +70,7 @@ public class DownloadResponderTest extends RegexTestCase {
     request.addInput("release", "xyz");
     request.setResource("file1");
 
-    Response response = responder.makeResponse(new FitNesseContext(), request);
+    Response response = responder.makeResponse(context, request);
     return response;
   }
 

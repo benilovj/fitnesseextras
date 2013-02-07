@@ -4,6 +4,7 @@ import util.FileUtil;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class Release {
@@ -60,11 +61,29 @@ public class Release {
     return releaseFiles.size();
   }
 
-  public void saveInfo() throws Exception {
-    FileWriter writer = new FileWriter(infoFile);
-    for (Iterator iterator = getFiles().iterator(); iterator.hasNext();)
-      writer.write(iterator.next().toString() + "\n");
-    writer.close();
+  public void saveInfo()  {
+    FileWriter writer = null;
+	try {
+		writer = new FileWriter(infoFile);
+		for (Iterator iterator = getFiles().iterator(); iterator.hasNext();)
+		  writer.write(iterator.next().toString() + "\n");
+		writer.flush();
+		writer.close();
+		writer = null;
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	finally{
+		// Handle the case where something failed that you *didn't* catch
+        if (writer != null) {
+            try {
+                writer.close();
+                writer = null;
+            } catch (Exception e2) {
+            }
+        }
+	}
   }
 
   public List getFiles() {
@@ -77,14 +96,18 @@ public class Release {
     return (ReleaseFile) releaseFiles.get(filename);
   }
 
-  public boolean isCorrupted() throws Exception {
-    if (infoFile == null)
-      return true;
-    else if (!infoFile.exists())
-      return true;
-    else if (FileUtil.getFileContent(infoFile).equals(("")) ||
-      FileUtil.getFileContent(infoFile).equals((FileUtil.ENDL)))
-      return true;
+  public boolean isCorrupted()  {
+    try {
+		if (infoFile == null)
+		  return true;
+		else if (!infoFile.exists())
+		  return true;
+		else if (FileUtil.getFileContent(infoFile).equals(("")) ||
+		  FileUtil.getFileContent(infoFile).equals((FileUtil.ENDL)))
+		  return true;
+	} catch (IOException e) {
+		return false;
+	}
 
     return false;
   }
