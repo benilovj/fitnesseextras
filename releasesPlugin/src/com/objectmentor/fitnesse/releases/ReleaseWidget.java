@@ -1,16 +1,28 @@
 package com.objectmentor.fitnesse.releases;
 
-import fitnesse.html.*;
-import fitnesse.wikitext.WikiWidget;
-import fitnesse.wikitext.widgets.ParentWidget;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ReleaseWidget extends WikiWidget {
+import util.Maybe;
+
+import fitnesse.html.HtmlElement;
+import fitnesse.html.HtmlTableListingBuilder;
+import fitnesse.html.HtmlTag;
+import fitnesse.html.HtmlUtil;
+import fitnesse.html.RawHtml;
+import fitnesse.html.TagGroup;
+import fitnesse.wikitext.parser.Parser;
+import fitnesse.wikitext.parser.Rule;
+import fitnesse.wikitext.parser.Symbol;
+import fitnesse.wikitext.parser.SymbolType;
+import fitnesse.wikitext.parser.Matcher;
+import fitnesse.wikitext.parser.Translation;
+import fitnesse.wikitext.parser.Translator;
+import fitnesse.wikitext.widgets.ParentWidget;
+
+public class ReleaseWidget extends SymbolType implements Rule, Translation{
   public static final String REGEXP = "^!release [^\r\n]*";
   private static final Pattern pattern = Pattern.compile(
     "^!release (-r\\s)?(\\S*)\\s?(\\S+)?"
@@ -20,18 +32,22 @@ public class ReleaseWidget extends WikiWidget {
   public boolean reverseOrder;
   public String href;
 
-  public ReleaseWidget(ParentWidget parent, String text) throws Exception {
-    super(parent);
-    Matcher match = pattern.matcher(text);
-    if (match.find()) {
-      reverseOrder = match.group(1) != null;
-      releaseName = match.group(2);
-      href = match.group(3);
-      release = new Release(releaseName);
-    }
+  public ReleaseWidget() throws Exception {
+    super("Release");
+    wikiMatcher(new Matcher().string("!pi"));
+    wikiRule(this);
+    htmlTranslation(this);
+  }
+  
+  @Override
+  public Maybe<Symbol> parse(Symbol arg0, Parser arg1) {
+	  
+	
+  	// TODO Auto-generated method stub
+  	return null;
   }
 
-  public String render() throws Exception {
+  public String toTarget(Translator translator, Symbol symbol) {
     TagGroup html = new TagGroup();
     addTitle(html);
     if (release.exists()) {
@@ -42,7 +58,7 @@ public class ReleaseWidget extends WikiWidget {
     return html.html();
   }
 
-  private void addTitle(TagGroup html) throws Exception {
+  private void addTitle(TagGroup html)  {
     if (release.isCorrupted()) {
       html.add(new HtmlTag("h3", "release " + releaseName + " is Corrupted"));
     } else {
@@ -55,7 +71,7 @@ public class ReleaseWidget extends WikiWidget {
     }
   }
 
-  private void addFilesHtml(TagGroup html) throws Exception {
+  private void addFilesHtml(TagGroup html)  {
     if (release.fileCount() == 0)
       html.add("There are no files in this release.");
     else {
@@ -73,7 +89,7 @@ public class ReleaseWidget extends WikiWidget {
   }
 
   private void addFileRow(ReleaseFile file, HtmlTableListingBuilder list)
-    throws Exception {
+    {
     HtmlElement[] rowElements = new HtmlElement[3];
     String href = "/" + file.getFilename() +
       "?responder=releaseDownload&release=" + releaseName;
@@ -87,7 +103,7 @@ public class ReleaseWidget extends WikiWidget {
     list.addRow(rowElements);
   }
 
-  private void addTitleRow(HtmlTableListingBuilder list) throws Exception {
+  private void addTitleRow(HtmlTableListingBuilder list)  {
     HtmlElement[] rowElements = new HtmlElement[3];
     rowElements[0] = HtmlUtil.makeSpanTag("caps", "File");
     rowElements[1] = HtmlUtil.makeSpanTag("caps", "Size");
@@ -98,4 +114,6 @@ public class ReleaseWidget extends WikiWidget {
   public String getReleaseName() {
     return releaseName;
   }
+
+
 }

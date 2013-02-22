@@ -1,13 +1,15 @@
 package com.objectmentor.fitnesse.releases;
 
+import fitnesse.html.HtmlElement;
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.WikiPage;
-import fitnesse.wikitext.widgets.MockWidgetRoot;
-import fitnesse.wikitext.widgets.WidgetRoot;
-import fitnesse.wikitext.widgets.WidgetTestCase;
+import fitnesse.wikitext.test.ParserTestHelper;
+import fitnesse.wikitext.test.TestRoot;
+import fitnesse.wikitext.test.TestVariableSource;
 import util.FileUtil;
+import org.junit.Test;
 
-public class ReleaseWidgetTest extends WidgetTestCase {
+public class ReleaseWidgetTest {
   private WikiPage page;
   private WidgetRoot widgetRoot;
 
@@ -20,6 +22,25 @@ public class ReleaseWidgetTest extends WidgetTestCase {
   public void tearDown() throws Exception {
     FileUtil.deleteFileSystemDirectory("releases");
   }
+  
+  
+
+  @Test 
+  public void translatesVariables() throws Exception {
+      ParserTestHelper.assertTranslatesTo("${x}", new TestVariableSource("x", "y"), "y");
+      ParserTestHelper.assertTranslatesTo("${BoBo}", new TestVariableSource("BoBo", "y"), "y");
+      assertTranslatesVariable("${x}", "y");
+      assertTranslatesVariable("${z}", "<span class=\"meta\">undefined variable: z</span>");
+      assertTranslatesVariable("${}", "${}");
+  }
+  
+  private void assertTranslatesVariable(String variable, String expected) throws Exception {
+      WikiPage pageOne = new TestRoot().makePage("PageOne", "!define x {y}\n" + variable);
+      ParserTestHelper.assertTranslatesTo(pageOne,
+        "<span class=\"meta\">variable defined: x=y</span>" + HtmlElement.endl +
+          ParserTestHelper.newLineRendered + expected);
+  }
+
 
   public void testRegexp() throws Exception {
     assertMatchEquals("!release somerelease", "!release somerelease");
