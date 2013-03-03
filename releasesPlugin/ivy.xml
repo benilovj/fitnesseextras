@@ -1,0 +1,20 @@
+<ivy-module version="2.0">
+	<info organisation="org.fitnesse" module="fitnesseextras">
+		<license name="Common Public License version 1.0"
+			url="http://www.opensource.org/licenses/cpl1.0" />
+		<description homepage="http://fitnesse.org">
+			The fully integrated standalone wiki and
+			acceptance testing framework.
+		</description>
+	</info>
+	<configurations>
+		<conf name="default" visibility="public" />
+		<conf name="test" visibility="public" extends="default" />
+	</configurations>
+	<dependencies>
+    <dependency org="org.fitnesse" name="fitnesse" rev="20121220" conf="default" transitive="true" />
+		<!-- scope: test -->
+		<dependency org="org.mockito" name="mockito-all" rev="1.7" conf="test->default" />
+		<dependency org="junit" name="junit" rev="4.10" conf="test->default" />
+	</dependencies>
+</ivy-module>
