@@ -1,28 +1,34 @@
 package com.objectmentor.fitnesse.releases;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import util.FileUtil;
 
 import java.io.File;
 
-import util.FileUtil;
+import static org.junit.Assert.assertEquals;
 
-public class ReleaseFileTest extends TestCase {
+public class ReleaseFileTest {
   private File file;
   private long actualLastModified;
   private long actualSize;
 
-  public void setUp() throws Exception {
+  @Before
+  public void setUp() {
     FileUtil.createFile("testfile.txt", "some text");
     file = new File("testfile.txt");
     actualLastModified = file.lastModified();
     actualSize = file.length();
   }
 
-  public void tearDown() throws Exception {
+  @After
+  public void tearDown() {
     FileUtil.deleteFile("testfile.txt");
   }
 
-  public void testConstruction() throws Exception {
+  @Test
+  public void construction() {
     ReleaseFile releaseFile = new ReleaseFile("testfile.txt", 123,
       actualLastModified, 10
     );
@@ -32,8 +38,8 @@ public class ReleaseFileTest extends TestCase {
     assertEquals(10, releaseFile.downloads);
   }
 
-  public void testSizeGetsUpdatedIfModificationTimeIsDifferent()
-    throws Exception {
+  @Test
+  public void sizeGetsUpdatedIfModificationTimeIsDifferent() {
     ReleaseFile releaseFile = new ReleaseFile("testfile.txt", 123, 1234567890,
       10
     );
@@ -43,7 +49,8 @@ public class ReleaseFileTest extends TestCase {
     assertEquals(10, releaseFile.downloads);
   }
 
-  public void testCreationWithJustFilename() throws Exception {
+  @Test
+  public void creationWithJustFilename() {
     ReleaseFile releaseFile = new ReleaseFile("testfile.txt");
     assertEquals("testfile.txt", releaseFile.filename);
     assertEquals(actualSize, releaseFile.size);
@@ -51,7 +58,8 @@ public class ReleaseFileTest extends TestCase {
     assertEquals(0, releaseFile.downloads);
   }
 
-  public void testGetters() throws Exception {
+  @Test
+  public void getters() {
     ReleaseFile releaseFile = new ReleaseFile("testfile.txt");
     assertEquals("testfile.txt", releaseFile.getFilename());
 
@@ -62,7 +70,8 @@ public class ReleaseFileTest extends TestCase {
     assertEquals("34", releaseFile.getDownloads());
   }
 
-  public void testToString() throws Exception {
+  @Test
+  public void toStringTest() {
     ReleaseFile releaseFile = new ReleaseFile("testfile.txt");
     releaseFile.size = 123;
     releaseFile.lastModified = 876543210;
@@ -71,7 +80,8 @@ public class ReleaseFileTest extends TestCase {
     assertEquals("testfile.txt\t123\t876543210\t321", releaseFile.toString());
   }
 
-  public void testParse() throws Exception {
+  @Test
+  public void parse() {
     ReleaseFile releaseFile = ReleaseFile.parse(".",
       "testfile.txt\t123\t" + actualLastModified + "\t321"
     );
