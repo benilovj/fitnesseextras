@@ -1,18 +1,19 @@
 package com.objectmentor.fitnesse.releases;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import util.FileUtil;
-import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.http.MockRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Response;
 import fitnesse.testutil.FitNesseUtil;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import util.FileUtil;
 
-public class DownloadResponderTest extends RegexTestCase {
+import static org.junit.Assert.assertEquals;
+import static util.RegexTestCase.assertSubString;
+
+public class DownloadResponderTest {
   private DownloadResponder responder;
   private FitNesseContext context;
   
@@ -74,7 +75,6 @@ public class DownloadResponderTest extends RegexTestCase {
     assertEquals("application/zip", response.getContentType());
   }
 
-  @Test
   private Response doSimpleDownload() throws Exception {
     ReleaseTest.prepareReleaseWithFiles();
     MockRequest request = new MockRequest();
