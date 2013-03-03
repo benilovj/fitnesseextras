@@ -111,7 +111,7 @@ public class ReleaseTest extends RegexTestCase {
     assertTrue(release.isCorrupted());
   }
 
-  public static Release prepareReleaseWithFiles() throws Exception {
+  public static Release prepareReleaseWithFiles() {
     makeReleaseDir();
     FileUtil.createFile("releases/xyz/file1", "package one");
     FileUtil.createFile("releases/xyz/file2", "package two");

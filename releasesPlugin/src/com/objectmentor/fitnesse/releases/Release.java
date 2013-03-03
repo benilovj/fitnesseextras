@@ -14,7 +14,7 @@ public class Release {
   private HashMap releaseFiles;
   private File infoFile;
 
-  public Release(String name) throws Exception {
+  public Release(String name) {
     releaseDir = new File(releaseHome, name);
     infoFile = new File(releaseDir, ".releaseInfo");
     releaseFiles = new HashMap();
@@ -26,7 +26,7 @@ public class Release {
     return releaseDir.exists();
   }
 
-  private synchronized void load() throws Exception {
+  private synchronized void load() {
     loadRecordedFiles();
     loadLocalFiles();
   }
@@ -43,9 +43,14 @@ public class Release {
     }
   }
 
-  private void loadRecordedFiles() throws Exception {
+  private void loadRecordedFiles() {
     if (infoFile.exists()) {
-      String info = FileUtil.getFileContent(infoFile);
+      String info;
+      try {
+        info = FileUtil.getFileContent(infoFile);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
       String[] rows = info.split("\n");
       for (int i = 0; i < rows.length; i++) {
         ReleaseFile releaseFile = ReleaseFile.parse(
